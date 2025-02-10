@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LibreTranslate Chinese to English Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+    }
+    textarea {
+      width: 100%;
+      max-width: 600px;
+      height: 100px;
+      padding: 10px;
+      font-size: 1rem;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      max-width: 600px;
+    }
+  </style>
+</head>
+<body>
+  <h1>LibreTranslate Chinese to English Test</h1>
+  <p>请输入中文文本：</p>
+  <textarea id="inputText" placeholder="例如：你好，世界！"></textarea>
+  <br>
+  <button id="translateBtn">Translate</button>
+  <h2>Translation:</h2>
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('translateBtn').addEventListener('click', function() {
+      const text = document.getElementById('inputText').value;
+      if (!text.trim()) {
+        alert("请输入一些文本进行翻译。");
+        return;
+      }
+      
+      fetch('https://libretranslate.com/translate', {
+        method: 'POST',
+        body: JSON.stringify({
+          q: text,
+          source: 'zh',
+          target: 'en',
+          format: "text"
+        }),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('result').textContent = data.translatedText;
+      })
+      .catch(err => {
+        document.getElementById('result').textContent = 'Error: ' + err;
+      });
+    });
+  </script>
+</body>
+</html>
