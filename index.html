@@ -40,30 +40,39 @@
   <div id="result"></div>
 
   <script>
-    document.getElementById('translateBtn').addEventListener('click', function() {
+    document.getElementById('translateBtn').addEventListener('click', async () => {
       const text = document.getElementById('inputText').value;
       if (!text.trim()) {
         alert("请输入一些文本进行翻译。");
         return;
       }
       
-      fetch('https://libretranslate.com/translate', {
-        method: 'POST',
-        body: JSON.stringify({
-          q: text,
-          source: 'zh',
-          target: 'en',
-          format: "text"
-        }),
-        headers: { 'Content-Type': 'application/json' }
-      })
-      .then(res => res.json())
-      .then(data => {
+      try {
+        const response = await fetch('https://libretranslate.com/translate', {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            q: text,
+            source: 'zh',
+            target: 'en',
+            format: "text"
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
         document.getElementById('result').textContent = data.translatedText;
-      })
-      .catch(err => {
-        document.getElementById('result').textContent = 'Error: ' + err;
-      });
+      } catch (error) {
+        document.getElementById('result').textContent = 'Error: ' + error;
+        console.error('Translation error:', error);
+      }
     });
   </script>
 </body>
